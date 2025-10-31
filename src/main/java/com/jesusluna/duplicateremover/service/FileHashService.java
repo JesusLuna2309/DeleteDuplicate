@@ -25,6 +25,7 @@ public class FileHashService {
      *
      * @param file the file to hash
      * @return hex-encoded hash string
+     * @throws IllegalArgumentException if file is null, doesn't exist, or is not a regular file
      * @throws IOException if file cannot be read
      */
     public String calculateHash(File file) throws IOException {

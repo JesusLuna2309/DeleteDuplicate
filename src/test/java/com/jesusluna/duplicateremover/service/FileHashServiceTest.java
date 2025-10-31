@@ -85,8 +85,9 @@ public class FileHashServiceTest {
     }
 
     @Test
-    public void testCalculateHashThrowsExceptionForNonExistentFile() {
-        File nonExistent = new File("/tmp/this-file-does-not-exist-12345.txt");
+    public void testCalculateHashThrowsExceptionForNonExistentFile(@TempDir Path tempDir) {
+        // Use platform-independent path that definitely doesn't exist
+        File nonExistent = tempDir.resolve("this-file-does-not-exist-12345.txt").toFile();
         
         assertThrows(IllegalArgumentException.class, () -> {
             hashService.calculateHash(nonExistent);
