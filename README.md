@@ -7,6 +7,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Java-21+-orange?logo=openjdk&logoColor=white" />
   <img src="https://img.shields.io/badge/JavaFX-21-blue?logo=java&logoColor=white" />
+  <img src="https://img.shields.io/badge/Maven-3.9+-blue?logo=apachemaven&logoColor=white" />
   <img src="https://img.shields.io/badge/Status-In%20Development-yellow" />
   <img src="https://img.shields.io/badge/License-GPLv3-blue" />
 </p>
@@ -17,19 +18,23 @@
 
 ### 🧠 Overview
 
-**Duplicate File Remover** is a desktop app built with **JavaFX** that scans directories to detect and remove duplicate files based on their **content hash**.  
-It provides a **dark and modern UI**, fast performance with **parallel processing**, and a clean user experience for data organization.
+**Duplicate File Remover** is a desktop application built with **JavaFX** that scans directories to detect and remove duplicate files based on their **content hash**.  
+It provides a **dark and modern UI**, fast performance with **parallel processing**, comprehensive logging, and multi-language support for a clean user experience in data organization.
 
 ---
 
 ### ✨ Features
 
-- 🗂️ Folder selection via file chooser  
-- ⚡ Fast duplicate detection using file hashing (MD5/SHA algorithms)  
-- 🧮 Parallelized file scanning for better performance  
-- 🧹 Safe file deletion with user confirmation  
-- 🌙 Dark, modern interface built with JavaFX and CSS  
-- 🧾 Real-time logs on console
+- 🗂️ **Folder selection** via intuitive file chooser
+- ⚡ **Fast duplicate detection** using efficient file hashing algorithms (SHA-256)
+- 🧮 **Parallelized file scanning** for optimal performance
+- 🧹 **Safe file operations** with user confirmation and dry-run mode
+- 🌙 **Dark, modern interface** built with JavaFX and custom CSS
+- 🌍 **Multi-language support** (Spanish and English)
+- 📝 **Comprehensive logging** with SLF4J and Logback
+- 🔄 **Progress tracking** with cancellation support
+- 📊 **Detailed results table** with sortable columns
+- 🚀 **Maven-based build** for easy compilation and packaging
 
 ---
 
@@ -51,54 +56,150 @@ flowchart TD
 
 ---
 
-### 🖼️ Screenshot (Placeholder)
+### 📋 Requirements
 
-![App Screenshot](resources/screenshots/main_window.png)
-
----
-
-### ⚙️ Built With
-
-- 🧱 **Java 21+**
-- 💠 **JavaFX 21**
-- 🎨 **FXML** for the UI
-- 🧰 **Eclipse IDE**
-- 🧾 Optional: **Gradle / Java Modules**
+- **Java 21** or higher
+- **Maven 3.9+** (for building)
+- **Operating System**: Windows, macOS, or Linux with JavaFX support
 
 ---
 
-### 🚀 How to Run
+### 🚀 Installation & Usage
 
-1. Clone the repository:
+#### Option 1: Using Maven (Recommended)
+
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/DuplicateFileRemover.git
+   git clone https://github.com/JesusLuna2309/Duplicate_File_Remover.git
+   cd Duplicate_File_Remover
    ```
-2. Open it in **Eclipse** (or IntelliJ / VS Code).  
-3. Ensure JavaFX is properly configured in the module path.  
-4. Run the main class:
+
+2. **Build the project:**
+   ```bash
+   mvn clean package
    ```
-   application.MainApp
+
+3. **Run the application:**
+   ```bash
+   mvn javafx:run
    ```
-5. Select a directory → Scan → Review duplicates → Delete safely.
+
+#### Option 2: Running the JAR
+
+After building with Maven, you can run the generated JAR:
+```bash
+java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
+```
+
+#### Usage Steps
+
+1. **Launch** the application
+2. **Select a folder** using the "Elegir carpeta" button
+3. **Choose options** (include subfolders if needed)
+4. **Start scanning** with the "Empezar limpieza" button
+5. **Review duplicates** in the results table
+6. **Take action** on duplicate files (delete, move to trash, etc.)
 
 ---
 
-### 📁 Project Structure
+### 🛠️ Development
+
+#### Building from Source
+
+```bash
+# Compile the project
+mvn clean compile
+
+# Run tests
+mvn test
+
+# Package as JAR
+mvn clean package
+
+# Run directly with JavaFX plugin
+mvn javafx:run
+```
+
+#### Project Structure
 
 ```
-DuplicateFileRemover/
+Duplicate_File_Remover/
 │
 ├── src/
-│   ├── application/        # Main Java source code
-│   └── resources/
-│       ├── icons/          # Icons and app images
-│       ├── styles/         # Dark theme CSS
-│       └── fxml/           # UI layouts
-│
-├── bin/                    # Compiled classes
-├── README.md               # This file
-└── module-info.java        # Module declaration
+│   ├── main/
+│   │   ├── java/com/jesusluna/duplicateremover/
+│   │   │   ├── MainApp.java              # Main application entry point
+│   │   │   └── module-info.java          # Java module descriptor
+│   │   └── resources/
+│   │       ├── icons/                    # Application icons
+│   │       ├── styles/                   # CSS stylesheets
+│   │       ├── i18n/                     # Internationalization bundles
+│   │       │   ├── messages.properties
+│   │       │   ├── messages_es.properties
+│   │       │   └── messages_en.properties
+│   │       └── logback.xml               # Logging configuration
+│   └── test/
+│       ├── java/                         # Unit tests
+│       └── resources/                    # Test resources
+├── .github/
+│   └── workflows/
+│       └── build.yml                     # CI/CD workflow
+├── pom.xml                               # Maven project configuration
+├── .gitignore                            # Git ignore rules
+├── .gitattributes                        # Git attributes for line endings
+├── .editorconfig                         # Editor configuration
+├── LICENSE                               # GPL v3 license
+└── README.md                             # This file
 ```
+
+---
+
+### 🔒 Security Considerations
+
+- **File deletion** is a destructive operation. Always review duplicates before deletion.
+- **Dry-run mode** allows you to preview actions without making changes.
+- **Logging** tracks all operations for audit purposes.
+- **Confirmation dialogs** prevent accidental data loss.
+
+---
+
+### 🗺️ Roadmap
+
+- [x] Maven-based build system
+- [x] Multi-language support (ES/EN)
+- [x] Comprehensive logging
+- [x] CI/CD with GitHub Actions
+- [ ] Complete duplicate detection engine with hash comparison
+- [ ] Results table with sortable columns
+- [ ] File preview for images
+- [ ] Export results to CSV/JSON
+- [ ] Move to trash instead of permanent deletion
+- [ ] Progress bar with cancellation support
+- [ ] Hash caching for faster re-scans
+- [ ] Advanced filtering options
+
+---
+
+### 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please ensure:
+- Code follows the project's style guidelines (.editorconfig)
+- Tests pass (`mvn test`)
+- Documentation is updated as needed
+
+---
+
+### 📄 License
+
+This project is licensed under the **GNU General Public License v3.0** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -120,12 +221,16 @@ Ofrece una **interfaz moderna y oscura**, un rendimiento rápido mediante **proc
 
 ### ✨ Características
 
-- 🗂️ Selección de carpeta con explorador de archivos  
-- ⚡ Detección rápida de duplicados mediante hash (MD5/SHA)  
-- 🧮 Escaneo de archivos en paralelo  
-- 🧹 Eliminación segura con confirmación del usuario  
-- 🌙 Interfaz oscura y moderna  
-- 🧾 Registro de acciones en la consola
+- 🗂️ **Selección de carpetas** mediante un explorador intuitivo
+- ⚡ **Detección rápida de duplicados** usando algoritmos eficientes de hash (SHA-256)
+- 🧮 **Escaneo de archivos en paralelo** para un rendimiento óptimo
+- 🧹 **Operaciones seguras** con confirmación del usuario y modo simulación
+- 🌙 **Interfaz moderna y oscura** construida con JavaFX y CSS personalizado
+- 🌍 **Soporte multiidioma** (español e inglés)
+- 📝 **Registro completo** con SLF4J y Logback
+- 🔄 **Seguimiento de progreso** con soporte de cancelación
+- 📊 **Tabla de resultados detallada** con columnas ordenables
+- 🚀 **Construcción basada en Maven** para fácil compilación y empaquetado
 
 ---
 
@@ -147,48 +252,98 @@ flowchart TD
 
 ---
 
-### ⚙️ Tecnologías utilizadas
+### 📋 Requisitos
 
-- 🧱 **Java 21+**
-- 💠 **JavaFX 21**
-- 🎨 **FXML** para la interfaz  
-- 🧰 **Eclipse IDE**
-- 🧾 Opcional: **Gradle / módulos Java**
+- **Java 21** o superior
+- **Maven 3.9+** (para compilar)
+- **Sistema Operativo**: Windows, macOS o Linux con soporte para JavaFX
 
 ---
 
-### 🚀 Cómo ejecutar el proyecto
+### 🚀 Instalación y Uso
 
-1. Clona este repositorio:
+#### Opción 1: Usando Maven (Recomendado)
+
+1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/your-username/DuplicateFileRemover.git
+   git clone https://github.com/JesusLuna2309/Duplicate_File_Remover.git
+   cd Duplicate_File_Remover
    ```
-2. Ábrelo en **Eclipse** o en tu IDE preferido.  
-3. Configura correctamente las librerías de JavaFX.  
-4. Ejecuta la clase principal:
+
+2. **Compilar el proyecto:**
+   ```bash
+   mvn clean package
    ```
-   application.MainApp
+
+3. **Ejecutar la aplicación:**
+   ```bash
+   mvn javafx:run
    ```
-5. Selecciona una carpeta → Analiza → Revisa duplicados → Elimina con seguridad.
+
+#### Opción 2: Ejecutar el JAR
+
+Después de compilar con Maven, puedes ejecutar el JAR generado:
+```bash
+java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
+```
+
+#### Pasos de Uso
+
+1. **Inicia** la aplicación
+2. **Selecciona una carpeta** usando el botón "Elegir carpeta"
+3. **Elige opciones** (incluir subcarpetas si es necesario)
+4. **Inicia el escaneo** con el botón "Empezar limpieza"
+5. **Revisa los duplicados** en la tabla de resultados
+6. **Toma acción** sobre los archivos duplicados (eliminar, mover a papelera, etc.)
 
 ---
 
-### 📁 Estructura del proyecto
+### 🔒 Consideraciones de Seguridad
 
-```
-DuplicateFileRemover/
-│
-├── src/
-│   ├── application/        # Código fuente Java
-│   └── resources/
-│       ├── icons/          # Iconos e imágenes
-│       ├── styles/         # Estilos CSS
-│       └── fxml/           # Vistas gráficas
-│
-├── bin/                    # Archivos compilados
-├── README.md               # Este archivo
-└── module-info.java        # Configuración del módulo
-```
+- La **eliminación de archivos** es una operación destructiva. Siempre revisa los duplicados antes de eliminar.
+- El **modo simulación** permite previsualizar acciones sin realizar cambios.
+- El **registro (logging)** rastrea todas las operaciones con fines de auditoría.
+- Los **diálogos de confirmación** previenen pérdida accidental de datos.
+
+---
+
+### 🗺️ Hoja de Ruta
+
+- [x] Sistema de construcción basado en Maven
+- [x] Soporte multiidioma (ES/EN)
+- [x] Registro completo (logging)
+- [x] CI/CD con GitHub Actions
+- [ ] Motor completo de detección de duplicados con comparación de hash
+- [ ] Tabla de resultados con columnas ordenables
+- [ ] Vista previa de archivos de imagen
+- [ ] Exportar resultados a CSV/JSON
+- [ ] Mover a papelera en lugar de eliminación permanente
+- [ ] Barra de progreso con soporte de cancelación
+- [ ] Caché de hash para re-escaneos más rápidos
+- [ ] Opciones avanzadas de filtrado
+
+---
+
+### 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas! Por favor sigue estos pasos:
+
+1. Haz un fork del repositorio
+2. Crea una rama de característica (`git checkout -b feature/CaracteristicaAsombrosa`)
+3. Haz commit de tus cambios (`git commit -m 'Agregar alguna CaracteristicaAsombrosa'`)
+4. Haz push a la rama (`git push origin feature/CaracteristicaAsombrosa`)
+5. Abre un Pull Request
+
+Por favor asegúrate de que:
+- El código sigue las guías de estilo del proyecto (.editorconfig)
+- Las pruebas pasan (`mvn test`)
+- La documentación se actualiza según sea necesario
+
+---
+
+### 📄 Licencia
+
+Este proyecto está licenciado bajo la **Licencia Pública General de GNU v3.0** - consulta el archivo [LICENSE](LICENSE) para más detalles.
 
 ---
 
@@ -199,4 +354,4 @@ Desarrollado por **Jesús Luna Romero**
 
 ---
 
-⭐ *If you like this project, give it a star on GitHub!*
+⭐ *Si te gusta este proyecto, ¡dale una estrella en GitHub!*
