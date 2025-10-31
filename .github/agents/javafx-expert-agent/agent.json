@@ -1,0 +1,17 @@
+{
+  "name": "JavaFX Expert Agent",
+  "description": "Un agente experto en JavaFX que escribe código con las mejores prácticas y patrones de diseño, técnico y directo.",
+  "persona": "persona.md",
+  "skills": ["skills/javafx.md"],
+  "memory": {
+    "enabled": true,
+    "scope": "project",
+    "branches": ["javafx-agent"]
+  },
+  "settings": {
+    "communicationStyle": "technical",
+    "specialization": "JavaFX",
+    "useBestPractices": true,
+    "designPatterns": true
+  }
+}
