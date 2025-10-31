@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Java-21+-orange?logo=openjdk&logoColor=white" />
   <img src="https://img.shields.io/badge/JavaFX-21-blue?logo=java&logoColor=white" />
   <img src="https://img.shields.io/badge/Status-In%20Development-yellow" />
-  <img src="https://img.shields.io/badge/License-MIT-green" />
+  <img src="https://img.shields.io/badge/License-GPLv3-blue" />
 </p>
 
 ---
