@@ -24,6 +24,7 @@ out/
 # Maven
 .mvn/
 !.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
 
 # Gradle
 .gradle/

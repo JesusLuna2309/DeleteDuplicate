@@ -9,4 +9,5 @@ module com.jesusluna.duplicateremover {
     opens com.jesusluna.duplicateremover to javafx.graphics, javafx.fxml;
     
     exports com.jesusluna.duplicateremover;
+    exports com.jesusluna.duplicateremover.service;
 }
