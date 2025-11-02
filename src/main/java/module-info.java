@@ -10,4 +10,6 @@ module com.jesusluna.duplicateremover {
     
     exports com.jesusluna.duplicateremover;
     exports com.jesusluna.duplicateremover.service;
+    exports com.jesusluna.duplicateremover.model;
+    exports com.jesusluna.duplicateremover.ui;
 }
