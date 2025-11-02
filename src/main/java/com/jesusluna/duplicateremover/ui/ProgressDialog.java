@@ -215,18 +215,18 @@ public class ProgressDialog {
     }
     
     private void deleteSelectedFiles(VBox resultsContainer) {
-        List<File> filesToDelete = new ArrayList<>();
+        List<DuplicateFileItem> selectedItems = new ArrayList<>();
         
-        // Collect selected files
+        // Collect selected items
         for (var node : resultsContainer.getChildren()) {
             if (node instanceof DuplicateFileItem item) {
                 if (item.isSelected()) {
-                    filesToDelete.add(item.getFile());
+                    selectedItems.add(item);
                 }
             }
         }
         
-        if (filesToDelete.isEmpty()) {
+        if (selectedItems.isEmpty()) {
             showError(messages.getString("error.no.selection"));
             return;
         }
@@ -236,7 +236,7 @@ public class ProgressDialog {
         confirm.initOwner(dialog);
         confirm.setTitle(messages.getString("delete.confirm.title"));
         confirm.setHeaderText(
-            String.format(messages.getString("delete.confirm.header"), filesToDelete.size())
+            String.format(messages.getString("delete.confirm.header"), selectedItems.size())
         );
         confirm.setContentText(messages.getString("delete.confirm.content"));
         
@@ -244,13 +244,16 @@ public class ProgressDialog {
             return;
         }
         
-        // Delete files
+        // Delete files and track which items were deleted
         int deleted = 0;
         List<String> errors = new ArrayList<>();
+        List<DuplicateFileItem> deletedItems = new ArrayList<>();
         
-        for (File file : filesToDelete) {
+        for (DuplicateFileItem item : selectedItems) {
+            File file = item.getFile();
             if (file.delete()) {
                 deleted++;
+                deletedItems.add(item);
                 logger.info("Deleted file: {}", file.getAbsolutePath());
             } else {
                 errors.add(file.getName());
@@ -274,12 +277,8 @@ public class ProgressDialog {
         
         summary.showAndWait();
         
-        // Refresh view by removing deleted items
-        resultsContainer.getChildren().removeIf(node -> 
-            node instanceof DuplicateFileItem item && 
-            item.isSelected() && 
-            !item.getFile().exists()
-        );
+        // Refresh view by removing successfully deleted items from UI
+        resultsContainer.getChildren().removeAll(deletedItems);
     }
     
     private void cancelScan() {
@@ -303,9 +302,6 @@ public class ProgressDialog {
     }
     
     private String formatFileSize(long bytes) {
-        if (bytes < 1024) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(1024));
-        String pre = "KMGTPE".charAt(exp - 1) + "";
-        return String.format("%.1f %sB", bytes / Math.pow(1024, exp), pre);
+        return com.jesusluna.duplicateremover.util.FileUtils.formatFileSize(bytes);
     }
 }

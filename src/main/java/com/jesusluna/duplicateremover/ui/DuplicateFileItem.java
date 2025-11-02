@@ -74,7 +74,8 @@ public class DuplicateFileItem extends HBox {
         imageView.setFitHeight(THUMBNAIL_SIZE);
         imageView.setPreserveRatio(true);
         
-        if (DuplicateFileScanner.isImageFile(file)) {
+        // Only load thumbnails for image files under 50MB to prevent memory issues
+        if (DuplicateFileScanner.isImageFile(file) && file.length() < 50_000_000) {
             try (FileInputStream fis = new FileInputStream(file)) {
                 Image image = new Image(fis, THUMBNAIL_SIZE, THUMBNAIL_SIZE, true, true);
                 imageView.setImage(image);
@@ -99,10 +100,7 @@ public class DuplicateFileItem extends HBox {
     }
     
     private String formatFileSize(long bytes) {
-        if (bytes < 1024) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(1024));
-        String pre = "KMGTPE".charAt(exp - 1) + "";
-        return String.format("%.1f %sB", bytes / Math.pow(1024, exp), pre);
+        return com.jesusluna.duplicateremover.util.FileUtils.formatFileSize(bytes);
     }
     
     public File getFile() {
