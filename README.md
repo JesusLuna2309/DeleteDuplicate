@@ -58,7 +58,7 @@ flowchart TD
 
 ### 📋 Requirements
 
-- **Java 21** or higher
+- **Java 17** or higher
 - **Maven 3.9+** (for building)
 - **Operating System**: Windows, macOS, or Linux with JavaFX support
 
@@ -169,12 +169,12 @@ Duplicate_File_Remover/
 - [x] Multi-language support (ES/EN)
 - [x] Comprehensive logging
 - [x] CI/CD with GitHub Actions
-- [ ] Complete duplicate detection engine with hash comparison
-- [ ] Results table with sortable columns
-- [ ] File preview for images
+- [x] Complete duplicate detection engine with hash comparison
+- [x] Progress bar with cancellation support
+- [x] Results view with duplicate groups
+- [x] File preview thumbnails for images
 - [ ] Export results to CSV/JSON
 - [ ] Move to trash instead of permanent deletion
-- [ ] Progress bar with cancellation support
 - [ ] Hash caching for faster re-scans
 - [ ] Advanced filtering options
 
@@ -254,7 +254,7 @@ flowchart TD
 
 ### 📋 Requisitos
 
-- **Java 21** o superior
+- **Java 17** o superior
 - **Maven 3.9+** (para compilar)
 - **Sistema Operativo**: Windows, macOS o Linux con soporte para JavaFX
 
@@ -313,12 +313,12 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
 - [x] Soporte multiidioma (ES/EN)
 - [x] Registro completo (logging)
 - [x] CI/CD con GitHub Actions
-- [ ] Motor completo de detección de duplicados con comparación de hash
-- [ ] Tabla de resultados con columnas ordenables
-- [ ] Vista previa de archivos de imagen
+- [x] Motor completo de detección de duplicados con comparación de hash
+- [x] Barra de progreso con soporte de cancelación
+- [x] Vista de resultados con grupos de duplicados
+- [x] Miniaturas de vista previa para archivos de imagen
 - [ ] Exportar resultados a CSV/JSON
 - [ ] Mover a papelera en lugar de eliminación permanente
-- [ ] Barra de progreso con soporte de cancelación
 - [ ] Caché de hash para re-escaneos más rápidos
 - [ ] Opciones avanzadas de filtrado
 
