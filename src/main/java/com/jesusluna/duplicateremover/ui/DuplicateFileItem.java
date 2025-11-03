@@ -28,18 +28,30 @@ public class DuplicateFileItem extends HBox {
     
     private final File file;
     private final CheckBox checkBox;
+    private final boolean isOriginal;
     
-    public DuplicateFileItem(File file) {
+    public DuplicateFileItem(File file, boolean isOriginal) {
         this.file = file;
+        this.isOriginal = isOriginal;
         this.checkBox = new CheckBox();
         
         setAlignment(Pos.CENTER_LEFT);
         setSpacing(10);
         setPadding(new Insets(5, 10, 5, 10));
-        setStyle("-fx-background-color: #1e1e1e; -fx-border-color: #333; -fx-border-radius: 4; -fx-background-radius: 4;");
         
-        // Checkbox
+        // Highlight original files with different style
+        if (isOriginal) {
+            setStyle("-fx-background-color: #2a2a2a; -fx-border-color: #0078d7; -fx-border-width: 2; -fx-border-radius: 4; -fx-background-radius: 4;");
+        } else {
+            setStyle("-fx-background-color: #1e1e1e; -fx-border-color: #333; -fx-border-radius: 4; -fx-background-radius: 4;");
+        }
+        
+        // Checkbox - disabled for original files
         checkBox.setStyle("-fx-text-fill: #cccccc;");
+        if (isOriginal) {
+            checkBox.setDisable(true);
+            checkBox.setSelected(false);
+        }
         
         // Thumbnail or icon
         ImageView thumbnail = createThumbnail(file);
@@ -49,9 +61,11 @@ public class DuplicateFileItem extends HBox {
         fileInfo.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(fileInfo, Priority.ALWAYS);
         
-        Label fileNameLabel = new Label(file.getName());
+        // Add [ORIGINAL] tag to filename for original files
+        String displayName = isOriginal ? "[ORIGINAL] " + file.getName() : file.getName();
+        Label fileNameLabel = new Label(displayName);
         fileNameLabel.setFont(Font.font("Segoe UI", 13));
-        fileNameLabel.setTextFill(Color.web("#e0e0e0"));
+        fileNameLabel.setTextFill(isOriginal ? Color.web("#00bfff") : Color.web("#e0e0e0"));
         
         Label filePathLabel = new Label(file.getAbsolutePath());
         filePathLabel.setFont(Font.font("Segoe UI", 10));
@@ -66,6 +80,11 @@ public class DuplicateFileItem extends HBox {
         fileInfo.getChildren().addAll(fileNameLabel, filePathLabel, fileSizeLabel);
         
         getChildren().addAll(checkBox, thumbnail, fileInfo);
+    }
+    
+    // Backwards compatibility constructor
+    public DuplicateFileItem(File file) {
+        this(file, false);
     }
     
     private ImageView createThumbnail(File file) {
@@ -112,6 +131,13 @@ public class DuplicateFileItem extends HBox {
     }
     
     public void setSelected(boolean selected) {
-        checkBox.setSelected(selected);
+        // Don't allow selecting original files
+        if (!isOriginal) {
+            checkBox.setSelected(selected);
+        }
+    }
+    
+    public boolean isOriginal() {
+        return isOriginal;
     }
 }
