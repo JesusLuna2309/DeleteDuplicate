@@ -208,8 +208,7 @@ public class ProgressDialog {
             HBox.setHgrow(groupLabel, Priority.ALWAYS);
             
             Button selectGroupButton = new Button(messages.getString("button.select.all.group"));
-            selectGroupButton.setStyle("-fx-background-color: #0078d7; -fx-text-fill: white; -fx-font-size: 11px; " +
-                   "-fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 5 10 5 10;");
+            selectGroupButton.setStyle(smallButtonStyle());
             
             groupHeader.getChildren().addAll(groupLabel, selectGroupButton);
             groupHeader.setPadding(new Insets(10, 0, 5, 0));
@@ -341,6 +340,11 @@ public class ProgressDialog {
     private String buttonStyle() {
         return "-fx-background-color: #0078d7; -fx-text-fill: white; -fx-font-size: 14px; " +
                "-fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20 10 20;";
+    }
+    
+    private String smallButtonStyle() {
+        return "-fx-background-color: #0078d7; -fx-text-fill: white; -fx-font-size: 11px; " +
+               "-fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 5 10 5 10;";
     }
     
     private String formatFileSize(long bytes) {
