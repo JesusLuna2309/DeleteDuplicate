@@ -9,11 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 /**
  * Service for calculating pixel-based hashes for image files
  * This allows grouping images that are visually identical even if they have
  * different filenames, paths, or metadata (EXIF, etc.)
+ * 
+ * Supported formats: PNG, JPG/JPEG, BMP, GIF
  */
 public class ImageHashService {
 
@@ -107,6 +110,11 @@ public class ImageHashService {
         return result.toString();
     }
 
+    // Supported image formats for pixel-based hashing
+    private static final Set<String> SUPPORTED_FORMATS = Set.of(
+        ".png", ".jpg", ".jpeg", ".bmp", ".gif"
+    );
+
     /**
      * Checks if a file is a supported image format that can be processed by ImageIO
      *
@@ -119,11 +127,6 @@ public class ImageHashService {
         }
 
         String name = file.getName().toLowerCase();
-        // PNG, JPG/JPEG, BMP, GIF are well-supported by ImageIO
-        return name.endsWith(".png") || 
-               name.endsWith(".jpg") || 
-               name.endsWith(".jpeg") || 
-               name.endsWith(".bmp") || 
-               name.endsWith(".gif");
+        return SUPPORTED_FORMATS.stream().anyMatch(name::endsWith);
     }
 }
