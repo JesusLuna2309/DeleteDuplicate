@@ -143,6 +143,12 @@ public class MainApp extends Application {
             showAlert(Alert.AlertType.WARNING, messages.getString("alert.noDirectory"));
             return;
         }
+        
+        File directory = new File(dir);
+        if (!directory.exists() || !directory.isDirectory()) {
+            showAlert(Alert.AlertType.WARNING, messages.getString("alert.noDirectory"));
+            return;
+        }
 
         if (includeSubfolders.isSelected()) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -156,8 +162,11 @@ public class MainApp extends Application {
         }
 
         logger.info("Starting duplicate analysis in: {}", dir);
-        showAlert(Alert.AlertType.INFORMATION, 
-                  messages.getString("alert.starting") + "\n" + dir);
+        
+        // Open progress dialog and start scan
+        com.jesusluna.duplicateremover.ui.ProgressDialog progressDialog = 
+            new com.jesusluna.duplicateremover.ui.ProgressDialog(stage, messages);
+        progressDialog.startScan(directory, includeSubfolders.isSelected());
     }
 
     private void showAlert(Alert.AlertType type, String message) {
