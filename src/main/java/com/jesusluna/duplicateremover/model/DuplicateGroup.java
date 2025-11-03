@@ -2,6 +2,7 @@ package com.jesusluna.duplicateremover.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -41,5 +42,25 @@ public class DuplicateGroup {
         return files.stream()
                 .mapToLong(File::length)
                 .sum();
+    }
+    
+    /**
+     * Gets the original file in this duplicate group.
+     * The original is determined by:
+     * 1. Oldest modification date (file that was created/modified first)
+     * 2. If dates are equal, lexicographically smallest path
+     * 
+     * @return the file considered as the original, or null if no files in group
+     */
+    public File getOriginalFile() {
+        if (files.isEmpty()) {
+            return null;
+        }
+        
+        return files.stream()
+                .min(Comparator
+                    .comparingLong(File::lastModified)
+                    .thenComparing(File::getAbsolutePath))
+                .orElse(null);
     }
 }

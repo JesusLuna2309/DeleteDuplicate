@@ -159,6 +159,10 @@ public class ProgressDialog {
                 HBox actionBox = new HBox(10);
                 actionBox.setAlignment(Pos.CENTER);
                 
+                Button selectAllButton = new Button(messages.getString("button.select.all"));
+                selectAllButton.setStyle(buttonStyle());
+                selectAllButton.setOnAction(e -> selectAllDuplicates(resultsContainer));
+                
                 Button deleteButton = new Button(messages.getString("button.delete.selected"));
                 deleteButton.setStyle(buttonStyle());
                 deleteButton.setOnAction(e -> deleteSelectedFiles(resultsContainer));
@@ -167,7 +171,7 @@ public class ProgressDialog {
                 closeButton.setStyle(buttonStyle());
                 closeButton.setOnAction(e -> dialog.close());
                 
-                actionBox.getChildren().addAll(deleteButton, closeButton);
+                actionBox.getChildren().addAll(selectAllButton, deleteButton, closeButton);
                 
                 mainContainer.getChildren().addAll(resultsTitle, resultsSubtitle, resultsPane, actionBox);
             }
@@ -188,22 +192,48 @@ public class ProgressDialog {
         container.setPadding(new Insets(10));
         
         for (DuplicateGroup group : duplicates) {
-            // Group header
+            // Get the original file for this group
+            File originalFile = group.getOriginalFile();
+            
+            // Group header with select button
+            HBox groupHeader = new HBox(10);
+            groupHeader.setAlignment(Pos.CENTER_LEFT);
+            
             Label groupLabel = new Label(
                 String.format(messages.getString("results.group.header"), 
                     group.getFileCount(), formatFileSize(group.getTotalSize()))
             );
             groupLabel.setFont(Font.font("Segoe UI Semibold", 13));
             groupLabel.setTextFill(Color.web("#00bfff"));
-            groupLabel.setPadding(new Insets(10, 0, 5, 0));
+            HBox.setHgrow(groupLabel, Priority.ALWAYS);
             
-            container.getChildren().add(groupLabel);
+            Button selectGroupButton = new Button(messages.getString("button.select.all.group"));
+            selectGroupButton.setStyle(smallButtonStyle());
+            
+            groupHeader.getChildren().addAll(groupLabel, selectGroupButton);
+            groupHeader.setPadding(new Insets(10, 0, 5, 0));
+            
+            container.getChildren().add(groupHeader);
+            
+            // Store group items for select button functionality
+            List<DuplicateFileItem> groupItems = new ArrayList<>();
             
             // Files in group
             for (File file : group.getFiles()) {
-                DuplicateFileItem item = new DuplicateFileItem(file);
+                boolean isOriginal = file.equals(originalFile);
+                DuplicateFileItem item = new DuplicateFileItem(file, isOriginal);
+                groupItems.add(item);
                 container.getChildren().add(item);
             }
+            
+            // Wire up select button to select all non-original files in this group
+            selectGroupButton.setOnAction(e -> {
+                for (DuplicateFileItem item : groupItems) {
+                    if (!item.isOriginal()) {
+                        item.setSelected(true);
+                    }
+                }
+            });
             
             // Separator
             Separator separator = new Separator();
@@ -212,6 +242,17 @@ public class ProgressDialog {
         }
         
         return container;
+    }
+    
+    private void selectAllDuplicates(VBox resultsContainer) {
+        // Select all items that are not marked as original
+        for (var node : resultsContainer.getChildren()) {
+            if (node instanceof DuplicateFileItem item) {
+                if (!item.isOriginal()) {
+                    item.setSelected(true);
+                }
+            }
+        }
     }
     
     private void deleteSelectedFiles(VBox resultsContainer) {
@@ -299,6 +340,11 @@ public class ProgressDialog {
     private String buttonStyle() {
         return "-fx-background-color: #0078d7; -fx-text-fill: white; -fx-font-size: 14px; " +
                "-fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20 10 20;";
+    }
+    
+    private String smallButtonStyle() {
+        return "-fx-background-color: #0078d7; -fx-text-fill: white; -fx-font-size: 11px; " +
+               "-fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 5 10 5 10;";
     }
     
     private String formatFileSize(long bytes) {

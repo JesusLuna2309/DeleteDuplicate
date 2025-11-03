@@ -16,7 +16,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>21</java.version>
+    <java.version>17</java.version>
     <javafx.version>21.0.2</javafx.version>
 
     <!-- IMPORTANTE: classifier correcto para OpenJFX en Windows -->
