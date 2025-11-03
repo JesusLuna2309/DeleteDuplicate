@@ -5,6 +5,7 @@ module com.jesusluna.duplicateremover {
     requires org.slf4j;
     requires ch.qos.logback.classic;
     requires ch.qos.logback.core;
+    requires java.desktop; // Required for ImageIO and BufferedImage
     
     opens com.jesusluna.duplicateremover to javafx.graphics, javafx.fxml;
     
