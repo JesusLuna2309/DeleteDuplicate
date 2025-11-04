@@ -183,12 +183,20 @@ public class ProgressDialog {
             
             for (File file : group.getFiles()) {
                 if (!file.equals(original)) {
+                    // Safety check: verify file still exists before deletion
+                    if (!file.exists()) {
+                        logger.warn("File no longer exists, skipping: {}", file.getAbsolutePath());
+                        errors.add(file.getAbsolutePath() + " (file not found)");
+                        continue;
+                    }
+                    
                     // This is a duplicate, delete it
                     if (file.delete()) {
                         deleted++;
                         logger.info("Deleted duplicate file: {}", file.getAbsolutePath());
                     } else {
-                        errors.add(file.getName());
+                        // Store full path for better error reporting
+                        errors.add(file.getAbsolutePath());
                         logger.warn("Failed to delete file: {}", file.getAbsolutePath());
                     }
                 }
@@ -205,7 +213,7 @@ public class ProgressDialog {
         
         if (!errors.isEmpty()) {
             summary.setContentText(
-                messages.getString("delete.summary.errors") + "\n" + String.join(", ", errors)
+                messages.getString("delete.summary.errors") + "\n" + String.join("\n", errors)
             );
         }
         

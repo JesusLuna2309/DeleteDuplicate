@@ -36,6 +36,26 @@ public class AutomaticDeletionIntegrationTest {
         ImageIO.write(image, "png", imageFile);
         return imageFile;
     }
+    
+    /**
+     * Helper method to scan directory and find duplicate groups
+     */
+    private java.util.List<DuplicateGroup> scanForDuplicates(Path tempDir) throws IOException {
+        File[] files = tempDir.toFile().listFiles();
+        assertNotNull(files, "Files array should not be null");
+        
+        Map<String, DuplicateGroup> hashGroups = new HashMap<>();
+        for (File file : files) {
+            if (file.isFile()) {
+                String hash = hashService.calculateHash(file);
+                hashGroups.computeIfAbsent(hash, DuplicateGroup::new).addFile(file);
+            }
+        }
+        
+        return hashGroups.values().stream()
+            .filter(DuplicateGroup::isDuplicate)
+            .toList();
+    }
 
     @Test
     public void testAutomaticDeletionWorkflow(@TempDir Path tempDir) 
@@ -55,21 +75,7 @@ public class AutomaticDeletionIntegrationTest {
         File uniqueFile = createImage(tempDir, "unique.png", Color.GREEN);
         
         // Step 2: Scan for duplicates
-        File[] files = tempDir.toFile().listFiles();
-        assertNotNull(files, "Files array should not be null");
-        
-        Map<String, DuplicateGroup> hashGroups = new HashMap<>();
-        for (File file : files) {
-            if (file.isFile()) {
-                String hash = hashService.calculateHash(file);
-                hashGroups.computeIfAbsent(hash, DuplicateGroup::new).addFile(file);
-            }
-        }
-        
-        java.util.List<DuplicateGroup> duplicateGroups = hashGroups.values().stream()
-            .filter(DuplicateGroup::isDuplicate)
-            .toList();
-        
+        java.util.List<DuplicateGroup> duplicateGroups = scanForDuplicates(tempDir);
         assertEquals(2, duplicateGroups.size(), "Should find 2 duplicate groups");
         
         // Step 3: Count files to delete (simulate automatic deletion logic)
@@ -127,21 +133,7 @@ public class AutomaticDeletionIntegrationTest {
         createImage(tempDir, "file3.png", Color.GREEN);
         
         // Scan for duplicates
-        File[] files = tempDir.toFile().listFiles();
-        assertNotNull(files, "Files array should not be null");
-        
-        Map<String, DuplicateGroup> hashGroups = new HashMap<>();
-        for (File file : files) {
-            if (file.isFile()) {
-                String hash = hashService.calculateHash(file);
-                hashGroups.computeIfAbsent(hash, DuplicateGroup::new).addFile(file);
-            }
-        }
-        
-        java.util.List<DuplicateGroup> duplicateGroups = hashGroups.values().stream()
-            .filter(DuplicateGroup::isDuplicate)
-            .toList();
-        
+        java.util.List<DuplicateGroup> duplicateGroups = scanForDuplicates(tempDir);
         assertTrue(duplicateGroups.isEmpty(), "Should find no duplicate groups");
         
         // Count files to delete (should be 0)
@@ -170,19 +162,7 @@ public class AutomaticDeletionIntegrationTest {
         File file2 = createImage(tempDir, "file_2.png", Color.MAGENTA);
         
         // Scan for duplicates
-        File[] files = tempDir.toFile().listFiles();
-        Map<String, DuplicateGroup> hashGroups = new HashMap<>();
-        for (File file : files) {
-            if (file.isFile()) {
-                String hash = hashService.calculateHash(file);
-                hashGroups.computeIfAbsent(hash, DuplicateGroup::new).addFile(file);
-            }
-        }
-        
-        java.util.List<DuplicateGroup> duplicateGroups = hashGroups.values().stream()
-            .filter(DuplicateGroup::isDuplicate)
-            .toList();
-        
+        java.util.List<DuplicateGroup> duplicateGroups = scanForDuplicates(tempDir);
         assertEquals(1, duplicateGroups.size(), "Should find 1 duplicate group");
         
         DuplicateGroup group = duplicateGroups.get(0);
