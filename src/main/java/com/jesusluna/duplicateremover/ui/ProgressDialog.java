@@ -38,11 +38,13 @@ public class ProgressDialog {
     private final Label progressLabel;
     private final Button okButton;
     private final Button cancelButton;
+    private final boolean autoDeleteMode;
     
     private DuplicateFileScanner scanner;
     private ScrollPane resultsPane;
     
-    public ProgressDialog(Stage owner, ResourceBundle messages) {
+    public ProgressDialog(Stage owner, ResourceBundle messages, boolean autoDeleteMode) {
+        this.autoDeleteMode = autoDeleteMode;
         this.messages = messages;
         this.dialog = new Stage();
         
@@ -125,66 +127,178 @@ public class ProgressDialog {
     
     private void showResults(List<DuplicateGroup> duplicates) {
         Platform.runLater(() -> {
-            // Clear progress UI
-            mainContainer.getChildren().clear();
-            
-            // Results header
-            Label resultsTitle = new Label(messages.getString("results.title"));
-            resultsTitle.setFont(Font.font("Segoe UI Semibold", 18));
-            resultsTitle.setTextFill(Color.web("#00bfff"));
-            
-            Label resultsSubtitle = new Label(
-                String.format(messages.getString("results.subtitle"), duplicates.size())
-            );
-            resultsSubtitle.setFont(Font.font("Segoe UI", 12));
-            resultsSubtitle.setTextFill(Color.web("#cccccc"));
-            
-            if (duplicates.isEmpty()) {
-                Label noDuplicates = new Label(messages.getString("results.none"));
-                noDuplicates.setFont(Font.font("Segoe UI", 14));
-                noDuplicates.setTextFill(Color.web("#888888"));
-                
-                mainContainer.getChildren().addAll(resultsTitle, noDuplicates);
+            if (autoDeleteMode) {
+                // Automatic deletion mode: skip preview, show confirmation
+                handleAutomaticDeletion(duplicates);
             } else {
-                // Create results view
-                VBox resultsContainer = createResultsView(duplicates);
-                
-                resultsPane = new ScrollPane(resultsContainer);
-                resultsPane.setFitToWidth(true);
-                resultsPane.setPrefHeight(400);
-                resultsPane.setStyle("-fx-background: #121212; -fx-background-color: #121212;");
-                VBox.setVgrow(resultsPane, Priority.ALWAYS);
-                
-                // Action buttons
-                HBox actionBox = new HBox(10);
-                actionBox.setAlignment(Pos.CENTER);
-                
-                Button selectAllButton = new Button(messages.getString("button.select.all"));
-                selectAllButton.setStyle(buttonStyle());
-                selectAllButton.setOnAction(e -> selectAllDuplicates(resultsContainer));
-                
-                Button deleteButton = new Button(messages.getString("button.delete.selected"));
-                deleteButton.setStyle(buttonStyle());
-                deleteButton.setOnAction(e -> deleteSelectedFiles(resultsContainer));
-                
-                Button closeButton = new Button(messages.getString("button.close"));
-                closeButton.setStyle(buttonStyle());
-                closeButton.setOnAction(e -> dialog.close());
-                
-                actionBox.getChildren().addAll(selectAllButton, deleteButton, closeButton);
-                
-                mainContainer.getChildren().addAll(resultsTitle, resultsSubtitle, resultsPane, actionBox);
+                // Manual mode: show the preview as before
+                showManualResults(duplicates);
             }
-            
-            // Enable close
-            okButton.setDisable(false);
-            cancelButton.setDisable(true);
-            
-            // Resize dialog
-            dialog.setWidth(700);
-            dialog.setHeight(600);
-            dialog.centerOnScreen();
         });
+    }
+    
+    private void handleAutomaticDeletion(List<DuplicateGroup> duplicates) {
+        // Clear progress UI
+        mainContainer.getChildren().clear();
+        
+        if (duplicates.isEmpty()) {
+            // No duplicates found
+            showNoDuplicatesMessage();
+            return;
+        }
+        
+        // Count files to delete (all duplicates except originals)
+        int filesToDelete = 0;
+        for (DuplicateGroup group : duplicates) {
+            // Each group has N files, we keep 1 original, so N-1 to delete
+            filesToDelete += group.getFileCount() - 1;
+        }
+        
+        // Show confirmation dialog
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.initOwner(dialog);
+        confirm.setTitle(messages.getString("delete.auto.confirm.title"));
+        confirm.setHeaderText(
+            String.format(messages.getString("delete.auto.confirm.header"), filesToDelete)
+        );
+        confirm.setContentText(messages.getString("delete.auto.confirm.content"));
+        
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            // User cancelled, just close the dialog
+            logger.info("User cancelled automatic deletion");
+            dialog.close();
+            return;
+        }
+        
+        // User confirmed, proceed with deletion
+        performAutomaticDeletion(duplicates);
+    }
+    
+    private void performAutomaticDeletion(List<DuplicateGroup> duplicates) {
+        int deleted = 0;
+        List<String> errors = new ArrayList<>();
+        
+        for (DuplicateGroup group : duplicates) {
+            File original = group.getOriginalFile();
+            
+            for (File file : group.getFiles()) {
+                if (!file.equals(original)) {
+                    // Safety check: verify file still exists before deletion
+                    if (!file.exists()) {
+                        logger.warn("File no longer exists, skipping: {}", file.getAbsolutePath());
+                        errors.add(file.getAbsolutePath() + " (file not found)");
+                        continue;
+                    }
+                    
+                    // This is a duplicate, delete it
+                    if (file.delete()) {
+                        deleted++;
+                        logger.info("Deleted duplicate file: {}", file.getAbsolutePath());
+                    } else {
+                        // Store full path for better error reporting
+                        errors.add(file.getAbsolutePath());
+                        logger.warn("Failed to delete file: {}", file.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        
+        // Show summary
+        Alert summary = new Alert(Alert.AlertType.INFORMATION);
+        summary.initOwner(dialog);
+        summary.setTitle(messages.getString("delete.summary.title"));
+        summary.setHeaderText(
+            String.format(messages.getString("delete.summary.header"), deleted)
+        );
+        
+        if (!errors.isEmpty()) {
+            summary.setContentText(
+                messages.getString("delete.summary.errors") + "\n" + String.join("\n", errors)
+            );
+        }
+        
+        summary.showAndWait();
+        
+        // Close the dialog
+        dialog.close();
+    }
+    
+    private void showNoDuplicatesMessage() {
+        Label noDuplicates = new Label(messages.getString("delete.summary.noduplicates"));
+        noDuplicates.setFont(Font.font("Segoe UI", 14));
+        noDuplicates.setTextFill(Color.web("#888888"));
+        
+        Button closeButton = new Button(messages.getString("button.close"));
+        closeButton.setStyle(buttonStyle());
+        closeButton.setOnAction(e -> dialog.close());
+        
+        mainContainer.getChildren().addAll(noDuplicates, closeButton);
+        
+        // Enable close
+        okButton.setDisable(false);
+        cancelButton.setDisable(true);
+    }
+    
+    private void showManualResults(List<DuplicateGroup> duplicates) {
+        // Clear progress UI
+        mainContainer.getChildren().clear();
+        
+        // Results header
+        Label resultsTitle = new Label(messages.getString("results.title"));
+        resultsTitle.setFont(Font.font("Segoe UI Semibold", 18));
+        resultsTitle.setTextFill(Color.web("#00bfff"));
+        
+        Label resultsSubtitle = new Label(
+            String.format(messages.getString("results.subtitle"), duplicates.size())
+        );
+        resultsSubtitle.setFont(Font.font("Segoe UI", 12));
+        resultsSubtitle.setTextFill(Color.web("#cccccc"));
+        
+        if (duplicates.isEmpty()) {
+            Label noDuplicates = new Label(messages.getString("results.none"));
+            noDuplicates.setFont(Font.font("Segoe UI", 14));
+            noDuplicates.setTextFill(Color.web("#888888"));
+            
+            mainContainer.getChildren().addAll(resultsTitle, noDuplicates);
+        } else {
+            // Create results view
+            VBox resultsContainer = createResultsView(duplicates);
+            
+            resultsPane = new ScrollPane(resultsContainer);
+            resultsPane.setFitToWidth(true);
+            resultsPane.setPrefHeight(400);
+            resultsPane.setStyle("-fx-background: #121212; -fx-background-color: #121212;");
+            VBox.setVgrow(resultsPane, Priority.ALWAYS);
+            
+            // Action buttons
+            HBox actionBox = new HBox(10);
+            actionBox.setAlignment(Pos.CENTER);
+            
+            Button selectAllButton = new Button(messages.getString("button.select.all"));
+            selectAllButton.setStyle(buttonStyle());
+            selectAllButton.setOnAction(e -> selectAllDuplicates(resultsContainer));
+            
+            Button deleteButton = new Button(messages.getString("button.delete.selected"));
+            deleteButton.setStyle(buttonStyle());
+            deleteButton.setOnAction(e -> deleteSelectedFiles(resultsContainer));
+            
+            Button closeButton = new Button(messages.getString("button.close"));
+            closeButton.setStyle(buttonStyle());
+            closeButton.setOnAction(e -> dialog.close());
+            
+            actionBox.getChildren().addAll(selectAllButton, deleteButton, closeButton);
+            
+            mainContainer.getChildren().addAll(resultsTitle, resultsSubtitle, resultsPane, actionBox);
+        }
+        
+        // Enable close
+        okButton.setDisable(false);
+        cancelButton.setDisable(true);
+        
+        // Resize dialog
+        dialog.setWidth(700);
+        dialog.setHeight(600);
+        dialog.centerOnScreen();
     }
     
     private VBox createResultsView(List<DuplicateGroup> duplicates) {

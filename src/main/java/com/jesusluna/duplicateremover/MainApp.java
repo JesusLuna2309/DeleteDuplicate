@@ -29,6 +29,7 @@ public class MainApp extends Application {
     private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
     
     private CheckBox includeSubfolders;
+    private CheckBox autoDeleteMode;
     private TextField directoryField;
     private ResourceBundle messages;
 
@@ -77,9 +78,13 @@ public class MainApp extends Application {
 
             dirBox.getChildren().addAll(directoryField, browseButton);
 
-            // Checkbox
+            // Checkboxes
             includeSubfolders = new CheckBox(messages.getString("checkbox.subfolders"));
             includeSubfolders.setTextFill(Color.web("#cccccc"));
+            
+            autoDeleteMode = new CheckBox(messages.getString("checkbox.autodelete"));
+            autoDeleteMode.setTextFill(Color.web("#cccccc"));
+            autoDeleteMode.setSelected(true); // Default to auto mode as per requirements
 
             // Start button
             Button startButton = new Button(messages.getString("button.start"));
@@ -91,7 +96,7 @@ public class MainApp extends Application {
             root.setAlignment(Pos.CENTER);
             root.setPadding(new Insets(50));
             root.setStyle("-fx-background-color: #121212;");
-            root.getChildren().addAll(titleBox, subtitle, dirBox, includeSubfolders, startButton);
+            root.getChildren().addAll(titleBox, subtitle, dirBox, includeSubfolders, autoDeleteMode, startButton);
 
             // Fade in animation
             FadeTransition fade = new FadeTransition(Duration.millis(1200), root);
@@ -164,8 +169,9 @@ public class MainApp extends Application {
         logger.info("Starting duplicate analysis in: {}", dir);
         
         // Open progress dialog and start scan
+        boolean autoMode = autoDeleteMode.isSelected();
         com.jesusluna.duplicateremover.ui.ProgressDialog progressDialog = 
-            new com.jesusluna.duplicateremover.ui.ProgressDialog(stage, messages);
+            new com.jesusluna.duplicateremover.ui.ProgressDialog(stage, messages, autoMode);
         progressDialog.startScan(directory, includeSubfolders.isSelected());
     }
 

@@ -28,7 +28,10 @@ It provides a **dark and modern UI**, fast performance with **parallel processin
 - 🗂️ **Folder selection** via intuitive file chooser
 - ⚡ **Fast duplicate detection** using efficient file hashing algorithms (SHA-256)
 - 🧮 **Parallelized file scanning** for optimal performance
-- 🧹 **Safe file operations** with user confirmation and dry-run mode
+- 🤖 **Automatic deletion mode** - Skip preview and delete all duplicates with one confirmation
+- 🔀 **Manual selection mode** - Review and select specific duplicates to delete
+- 🛡️ **Original file protection** - Automatically preserves oldest file in each duplicate group
+- 🧹 **Safe file operations** with user confirmation and comprehensive error reporting
 - 🌙 **Dark, modern interface** built with JavaFX and custom CSS
 - 🌍 **Multi-language support** (Spanish and English)
 - 📝 **Comprehensive logging** with SLF4J and Logback
@@ -95,10 +98,13 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
 
 1. **Launch** the application
 2. **Select a folder** using the "Elegir carpeta" button
-3. **Choose options** (include subfolders if needed)
+3. **Choose options**:
+   - Check "Include subfolders" if you want to scan subdirectories
+   - Check "Automatic deletion (no preview)" for automatic deletion mode (recommended for quick cleanup)
+   - Uncheck "Automatic deletion" if you want to manually review and select files to delete
 4. **Start scanning** with the "Empezar limpieza" button
-5. **Review duplicates** in the results table
-6. **Take action** on duplicate files (delete, move to trash, etc.)
+5. **Automatic mode**: Confirm deletion when prompted - all duplicates will be deleted automatically (originals preserved)
+6. **Manual mode**: Review duplicates in the results table, select files to delete, then click "Delete selected"
 
 ---
 
@@ -173,6 +179,8 @@ Duplicate_File_Remover/
 - [x] Progress bar with cancellation support
 - [x] Results view with duplicate groups
 - [x] File preview thumbnails for images
+- [x] Automatic deletion mode with original file protection
+- [x] Manual selection mode with preview
 - [ ] Export results to CSV/JSON
 - [ ] Move to trash instead of permanent deletion
 - [ ] Hash caching for faster re-scans
@@ -224,7 +232,10 @@ Ofrece una **interfaz moderna y oscura**, un rendimiento rápido mediante **proc
 - 🗂️ **Selección de carpetas** mediante un explorador intuitivo
 - ⚡ **Detección rápida de duplicados** usando algoritmos eficientes de hash (SHA-256)
 - 🧮 **Escaneo de archivos en paralelo** para un rendimiento óptimo
-- 🧹 **Operaciones seguras** con confirmación del usuario y modo simulación
+- 🤖 **Modo de eliminación automática** - Salta la vista previa y elimina todos los duplicados con una confirmación
+- 🔀 **Modo de selección manual** - Revisa y selecciona duplicados específicos para eliminar
+- 🛡️ **Protección de archivos originales** - Preserva automáticamente el archivo más antiguo de cada grupo
+- 🧹 **Operaciones seguras** con confirmación del usuario y reporte completo de errores
 - 🌙 **Interfaz moderna y oscura** construida con JavaFX y CSS personalizado
 - 🌍 **Soporte multiidioma** (español e inglés)
 - 📝 **Registro completo** con SLF4J y Logback
@@ -291,10 +302,13 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
 
 1. **Inicia** la aplicación
 2. **Selecciona una carpeta** usando el botón "Elegir carpeta"
-3. **Elige opciones** (incluir subcarpetas si es necesario)
+3. **Elige opciones**:
+   - Marca "Permitir actuar sobre subcarpetas" si quieres escanear subdirectorios
+   - Marca "Eliminación automática (sin vista previa)" para modo automático (recomendado para limpieza rápida)
+   - Desmarca "Eliminación automática" si quieres revisar y seleccionar archivos manualmente
 4. **Inicia el escaneo** con el botón "Empezar limpieza"
-5. **Revisa los duplicados** en la tabla de resultados
-6. **Toma acción** sobre los archivos duplicados (eliminar, mover a papelera, etc.)
+5. **Modo automático**: Confirma la eliminación cuando se te pregunte - todos los duplicados se eliminarán automáticamente (se preservan los originales)
+6. **Modo manual**: Revisa los duplicados en la tabla de resultados, selecciona archivos a eliminar y haz clic en "Eliminar seleccionados"
 
 ---
 
@@ -317,6 +331,8 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
 - [x] Barra de progreso con soporte de cancelación
 - [x] Vista de resultados con grupos de duplicados
 - [x] Miniaturas de vista previa para archivos de imagen
+- [x] Modo de eliminación automática con protección de archivos originales
+- [x] Modo de selección manual con vista previa
 - [ ] Exportar resultados a CSV/JSON
 - [ ] Mover a papelera en lugar de eliminación permanente
 - [ ] Caché de hash para re-escaneos más rápidos
