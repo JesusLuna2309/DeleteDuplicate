@@ -90,6 +90,8 @@ public class ConcurrentHashCalculationTest {
         assertNotNull(scanner4);
     }
 
+    private static final int SHA256_HEX_LENGTH = 64;
+
     @Test
     public void testFileHashServiceThreadSafety(@TempDir Path tempDir) throws Exception {
         // Create test files
@@ -115,7 +117,7 @@ public class ConcurrentHashCalculationTest {
         assertNotNull(hash1);
         assertNotNull(hash2);
         assertNotNull(hash3);
-        assertEquals(64, hash1.length()); // SHA-256 produces 64 hex chars
+        assertEquals(SHA256_HEX_LENGTH, hash1.length(), "SHA-256 produces 64 hex characters");
         
         // Verify different files produce different hashes
         assertNotEquals(hash1, hash2);

@@ -128,11 +128,16 @@ public class DuplicateFileScanner extends Task<List<DuplicateGroup>> {
     
     /**
      * Process files concurrently using ExecutorService
+     * Uses ThreadLocal to maintain one FileHashService instance per thread
      */
     private Map<String, DuplicateGroup> processConcurrently(List<File> files, int totalFiles) {
         Map<String, DuplicateGroup> hashGroups = new HashMap<>();
         ExecutorService executor = Executors.newFixedThreadPool(parallelism);
         CompletionService<HashResult> completionService = new ExecutorCompletionService<>(executor);
+        
+        // ThreadLocal to maintain one FileHashService per thread for efficiency
+        ThreadLocal<FileHashService> threadLocalHashService = 
+            ThreadLocal.withInitial(FileHashService::new);
         
         try {
             // Submit all hash calculation tasks
@@ -143,7 +148,7 @@ public class DuplicateFileScanner extends Task<List<DuplicateGroup>> {
                 }
                 
                 completionService.submit(() -> {
-                    FileHashService hashService = new FileHashService();
+                    FileHashService hashService = threadLocalHashService.get();
                     try {
                         String hash = hashService.calculateHash(file);
                         return HashResult.success(file, hash);
@@ -162,21 +167,19 @@ public class DuplicateFileScanner extends Task<List<DuplicateGroup>> {
                 }
                 
                 try {
-                    Future<HashResult> future = completionService.poll(5, TimeUnit.SECONDS);
-                    if (future != null) {
-                        HashResult result = future.get();
-                        
-                        if (result.isSuccess()) {
-                            hashGroups.computeIfAbsent(result.getHash(), DuplicateGroup::new)
-                                     .addFile(result.getFile());
-                        } else {
-                            logger.warn("Error calculating hash for file: {}", 
-                                       result.getFile().getAbsolutePath(), result.getError());
-                        }
-                        
-                        processedFiles++;
-                        updateProgressInfo(processedFiles, totalFiles);
+                    Future<HashResult> future = completionService.take();
+                    HashResult result = future.get();
+                    
+                    if (result.isSuccess()) {
+                        hashGroups.computeIfAbsent(result.getHash(), DuplicateGroup::new)
+                                 .addFile(result.getFile());
+                    } else {
+                        logger.warn("Error calculating hash for file: {}", 
+                                   result.getFile().getAbsolutePath(), result.getError());
                     }
+                    
+                    processedFiles++;
+                    updateProgressInfo(processedFiles, totalFiles);
                 } catch (InterruptedException e) {
                     logger.warn("Hash calculation interrupted", e);
                     Thread.currentThread().interrupt();
