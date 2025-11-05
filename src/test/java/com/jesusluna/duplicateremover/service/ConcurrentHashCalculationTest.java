@@ -75,18 +75,18 @@ public class ConcurrentHashCalculationTest {
     public void testScannerWithCustomParallelism(@TempDir Path tempDir) {
         File dir = tempDir.toFile();
         
-        // Test various parallelism levels
-        DuplicateFileScanner scanner1 = new DuplicateFileScanner(dir, false, 1);
+        // Test various parallelism levels (using default advanced image detection)
+        DuplicateFileScanner scanner1 = new DuplicateFileScanner(dir, false, true, 1);
         assertNotNull(scanner1);
         
-        DuplicateFileScanner scanner2 = new DuplicateFileScanner(dir, false, 4);
+        DuplicateFileScanner scanner2 = new DuplicateFileScanner(dir, false, true, 4);
         assertNotNull(scanner2);
         
-        DuplicateFileScanner scanner3 = new DuplicateFileScanner(dir, false, 8);
+        DuplicateFileScanner scanner3 = new DuplicateFileScanner(dir, false, true, 8);
         assertNotNull(scanner3);
         
         // Test that negative parallelism is handled (should default to 1)
-        DuplicateFileScanner scanner4 = new DuplicateFileScanner(dir, false, -1);
+        DuplicateFileScanner scanner4 = new DuplicateFileScanner(dir, false, true, -1);
         assertNotNull(scanner4);
     }
 

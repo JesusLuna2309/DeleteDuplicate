@@ -94,8 +94,8 @@ public class ProgressDialog {
         dialog.setScene(scene);
     }
     
-    public void startScan(File directory, boolean includeSubfolders) {
-        scanner = new DuplicateFileScanner(directory, includeSubfolders);
+    public void startScan(File directory, boolean includeSubfolders, boolean useAdvancedImageDetection) {
+        scanner = new DuplicateFileScanner(directory, includeSubfolders, useAdvancedImageDetection);
         
         // Bind progress
         progressBar.progressProperty().bind(scanner.progressProperty());

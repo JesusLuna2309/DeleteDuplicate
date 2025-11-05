@@ -24,23 +24,33 @@ public class DuplicateFileScanner extends Task<List<DuplicateGroup>> {
     
     private final File directory;
     private final boolean includeSubfolders;
+    private final boolean useAdvancedImageDetection;
     private final int parallelism;
     
     /**
      * Creates a scanner with default parallelism based on available processors
      */
     public DuplicateFileScanner(File directory, boolean includeSubfolders) {
-        this(directory, includeSubfolders, calculateDefaultParallelism());
+        this(directory, includeSubfolders, true, calculateDefaultParallelism());
+    }
+    
+    /**
+     * Creates a scanner with advanced image detection setting
+     */
+    public DuplicateFileScanner(File directory, boolean includeSubfolders, boolean useAdvancedImageDetection) {
+        this(directory, includeSubfolders, useAdvancedImageDetection, calculateDefaultParallelism());
     }
     
     /**
      * Creates a scanner with custom parallelism level
      */
-    public DuplicateFileScanner(File directory, boolean includeSubfolders, int parallelism) {
+    public DuplicateFileScanner(File directory, boolean includeSubfolders, boolean useAdvancedImageDetection, int parallelism) {
         this.directory = directory;
         this.includeSubfolders = includeSubfolders;
+        this.useAdvancedImageDetection = useAdvancedImageDetection;
         this.parallelism = Math.max(1, parallelism);
-        logger.info("Scanner initialized with parallelism level: {}", this.parallelism);
+        logger.info("Scanner initialized with parallelism level: {}, advanced image detection: {}", 
+            this.parallelism, this.useAdvancedImageDetection);
     }
     
     /**
@@ -104,7 +114,7 @@ public class DuplicateFileScanner extends Task<List<DuplicateGroup>> {
      */
     private Map<String, DuplicateGroup> processSequentially(List<File> files, int totalFiles) {
         Map<String, DuplicateGroup> hashGroups = new HashMap<>();
-        FileHashService hashService = new FileHashService();
+        FileHashService hashService = new FileHashService(useAdvancedImageDetection);
         int processedFiles = 0;
         
         for (File file : files) {
@@ -137,7 +147,7 @@ public class DuplicateFileScanner extends Task<List<DuplicateGroup>> {
         
         // ThreadLocal to maintain one FileHashService per thread for efficiency
         ThreadLocal<FileHashService> threadLocalHashService = 
-            ThreadLocal.withInitial(FileHashService::new);
+            ThreadLocal.withInitial(() -> new FileHashService(useAdvancedImageDetection));
         
         try {
             // Submit all hash calculation tasks

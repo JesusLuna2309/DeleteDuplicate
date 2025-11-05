@@ -22,9 +22,15 @@ public class FileHashService {
     private static final int BUFFER_SIZE = 8192; // 8KB buffer
     
     private final ImageHashService imageHashService;
+    private final boolean useAdvancedImageDetection;
 
     public FileHashService() {
+        this(true); // Default to advanced image detection for backward compatibility
+    }
+    
+    public FileHashService(boolean useAdvancedImageDetection) {
         this.imageHashService = new ImageHashService();
+        this.useAdvancedImageDetection = useAdvancedImageDetection;
     }
 
     /**
@@ -43,8 +49,8 @@ public class FileHashService {
             throw new IllegalArgumentException("Invalid file: " + file);
         }
 
-        // Try pixel-based hashing for supported image formats
-        if (imageHashService.isSupportedImageFormat(file)) {
+        // Try pixel-based hashing for supported image formats (only if enabled)
+        if (useAdvancedImageDetection && imageHashService.isSupportedImageFormat(file)) {
             try {
                 logger.debug("Calculating pixel-based hash for image: {}", file.getAbsolutePath());
                 return imageHashService.calculatePixelHash(file);
