@@ -27,7 +27,8 @@ It provides a **dark and modern UI**, fast performance with **parallel processin
 
 - 🗂️ **Folder selection** via intuitive file chooser
 - ⚡ **Fast duplicate detection** using efficient file hashing algorithms (SHA-256)
-- 🧮 **Parallelized file scanning** for optimal performance
+- 🧮 **Concurrent hash calculation** - Leverages multi-core CPUs for significantly faster scanning
+- 🚀 **Automatic parallelism tuning** - Optimizes thread pool size based on available CPU cores
 - 🤖 **Automatic deletion mode** - Skip preview and delete all duplicates with one confirmation
 - 🔀 **Manual selection mode** - Review and select specific duplicates to delete
 - 🛡️ **Original file protection** - Automatically preserves oldest file in each duplicate group
@@ -181,6 +182,7 @@ Duplicate_File_Remover/
 - [x] File preview thumbnails for images
 - [x] Automatic deletion mode with original file protection
 - [x] Manual selection mode with preview
+- [x] Concurrent hash calculation for faster scanning
 - [ ] Export results to CSV/JSON
 - [ ] Move to trash instead of permanent deletion
 - [ ] Hash caching for faster re-scans
@@ -231,7 +233,8 @@ Ofrece una **interfaz moderna y oscura**, un rendimiento rápido mediante **proc
 
 - 🗂️ **Selección de carpetas** mediante un explorador intuitivo
 - ⚡ **Detección rápida de duplicados** usando algoritmos eficientes de hash (SHA-256)
-- 🧮 **Escaneo de archivos en paralelo** para un rendimiento óptimo
+- 🧮 **Cálculo concurrente de hashes** - Aprovecha CPUs multinúcleo para escaneo significativamente más rápido
+- 🚀 **Ajuste automático de paralelismo** - Optimiza el tamaño del pool de hilos según los núcleos disponibles
 - 🤖 **Modo de eliminación automática** - Salta la vista previa y elimina todos los duplicados con una confirmación
 - 🔀 **Modo de selección manual** - Revisa y selecciona duplicados específicos para eliminar
 - 🛡️ **Protección de archivos originales** - Preserva automáticamente el archivo más antiguo de cada grupo
@@ -333,6 +336,7 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
 - [x] Miniaturas de vista previa para archivos de imagen
 - [x] Modo de eliminación automática con protección de archivos originales
 - [x] Modo de selección manual con vista previa
+- [x] Cálculo concurrente de hashes para escaneo más rápido
 - [ ] Exportar resultados a CSV/JSON
 - [ ] Mover a papelera en lugar de eliminación permanente
 - [ ] Caché de hash para re-escaneos más rápidos
