@@ -30,6 +30,7 @@ public class MainApp extends Application {
     
     private CheckBox includeSubfolders;
     private CheckBox autoDeleteMode;
+    private CheckBox advancedImageDetection;
     private TextField directoryField;
     private ResourceBundle messages;
 
@@ -85,6 +86,10 @@ public class MainApp extends Application {
             autoDeleteMode = new CheckBox(messages.getString("checkbox.autodelete"));
             autoDeleteMode.setTextFill(Color.web("#cccccc"));
             autoDeleteMode.setSelected(true); // Default to auto mode as per requirements
+            
+            advancedImageDetection = new CheckBox(messages.getString("checkbox.advanced.image"));
+            advancedImageDetection.setTextFill(Color.web("#cccccc"));
+            advancedImageDetection.setSelected(true); // Default to enabled for backward compatibility
 
             // Start button
             Button startButton = new Button(messages.getString("button.start"));
@@ -96,7 +101,7 @@ public class MainApp extends Application {
             root.setAlignment(Pos.CENTER);
             root.setPadding(new Insets(50));
             root.setStyle("-fx-background-color: #121212;");
-            root.getChildren().addAll(titleBox, subtitle, dirBox, includeSubfolders, autoDeleteMode, startButton);
+            root.getChildren().addAll(titleBox, subtitle, dirBox, includeSubfolders, autoDeleteMode, advancedImageDetection, startButton);
 
             // Fade in animation
             FadeTransition fade = new FadeTransition(Duration.millis(1200), root);
@@ -170,9 +175,10 @@ public class MainApp extends Application {
         
         // Open progress dialog and start scan
         boolean autoMode = autoDeleteMode.isSelected();
+        boolean useAdvancedImageDetection = advancedImageDetection.isSelected();
         com.jesusluna.duplicateremover.ui.ProgressDialog progressDialog = 
             new com.jesusluna.duplicateremover.ui.ProgressDialog(stage, messages, autoMode);
-        progressDialog.startScan(directory, includeSubfolders.isSelected());
+        progressDialog.startScan(directory, includeSubfolders.isSelected(), useAdvancedImageDetection);
     }
 
     private void showAlert(Alert.AlertType type, String message) {
