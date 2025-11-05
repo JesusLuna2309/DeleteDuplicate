@@ -13,7 +13,8 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Service for calculating file hashes
  * Uses SHA-256 algorithm for secure and reliable duplicate detection
- * For image files, uses pixel-based hashing to group visually identical images
+ * Optionally uses pixel-based hashing for image files to group visually identical images
+ * when advanced image detection is enabled
  */
 public class FileHashService {
 
@@ -35,9 +36,9 @@ public class FileHashService {
 
     /**
      * Calculates the hash of a file.
-     * For supported image formats (PNG, JPG, BMP, GIF), calculates a pixel-based hash
-     * to group visually identical images regardless of metadata or filename.
-     * For other files, calculates a standard file content hash.
+     * For supported image formats (PNG, JPG, BMP, GIF) when advanced image detection is enabled,
+     * calculates a pixel-based hash to group visually identical images regardless of metadata or filename.
+     * For other files, or when advanced image detection is disabled, calculates a standard file content hash.
      *
      * @param file the file to hash
      * @return hex-encoded hash string
