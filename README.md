@@ -18,26 +18,31 @@
 
 ### 🧠 Overview
 
-**Duplicate File Remover** is a desktop application built with **JavaFX** that scans directories to detect and remove duplicate files based on their **content hash**.  
+**Duplicate File Remover** is a desktop application built with **JavaFX** that scans directories to detect and remove duplicate files of **any type** based on their **content hash**.  
 It provides a **dark and modern UI**, fast performance with **parallel processing**, comprehensive logging, and multi-language support for a clean user experience in data organization.
+
+**Works with all file types**: documents, images, videos, audio, code files, archives, and more. Images can optionally use advanced pixel-based detection to group visually identical images regardless of metadata.
 
 ---
 
 ### ✨ Features
 
+- 📁 **Universal file support** - Works with ANY file type: documents, images, videos, audio, code, archives, etc.
 - 🗂️ **Folder selection** via intuitive file chooser
 - ⚡ **Fast duplicate detection** using efficient file hashing algorithms (SHA-256)
+- 🖼️ **Advanced image detection** (optional) - Pixel-based hashing for images to group visually identical files regardless of metadata
 - 🧮 **Concurrent hash calculation** - Leverages multi-core CPUs for significantly faster scanning
 - 🚀 **Automatic parallelism tuning** - Optimizes thread pool size based on available CPU cores
 - 🤖 **Automatic deletion mode** - Skip preview and delete all duplicates with one confirmation
 - 🔀 **Manual selection mode** - Review and select specific duplicates to delete
 - 🛡️ **Original file protection** - Automatically preserves oldest file in each duplicate group
+- 👁️ **Smart preview** - Image thumbnails when available, generic file info for other types
 - 🧹 **Safe file operations** with user confirmation and comprehensive error reporting
 - 🌙 **Dark, modern interface** built with JavaFX and custom CSS
 - 🌍 **Multi-language support** (Spanish and English)
 - 📝 **Comprehensive logging** with SLF4J and Logback
 - 🔄 **Progress tracking** with cancellation support
-- 📊 **Detailed results table** with sortable columns
+- 📊 **Detailed results view** organized by duplicate groups
 - 🚀 **Maven-based build** for easy compilation and packaging
 
 ---
@@ -98,14 +103,15 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
 #### Usage Steps
 
 1. **Launch** the application
-2. **Select a folder** using the "Elegir carpeta" button
+2. **Select a folder** using the "Choose folder" button
 3. **Choose options**:
    - Check "Include subfolders" if you want to scan subdirectories
    - Check "Automatic deletion (no preview)" for automatic deletion mode (recommended for quick cleanup)
    - Uncheck "Automatic deletion" if you want to manually review and select files to delete
-4. **Start scanning** with the "Empezar limpieza" button
+   - Check "Advanced image detection" to use pixel-based comparison for images (groups visually identical images regardless of metadata)
+4. **Start scanning** with the "Start cleaning" button
 5. **Automatic mode**: Confirm deletion when prompted - all duplicates will be deleted automatically (originals preserved)
-6. **Manual mode**: Review duplicates in the results table, select files to delete, then click "Delete selected"
+6. **Manual mode**: Review duplicates in the results view, select files to delete, then click "Delete selected"
 
 ---
 
@@ -224,26 +230,31 @@ Developed by **Jesús Luna Romero**
 
 ### 🧠 Descripción general
 
-**Duplicate File Remover** es una aplicación de escritorio creada con **JavaFX** que permite analizar carpetas para detectar y eliminar archivos duplicados según su **hash de contenido**.  
+**Duplicate File Remover** es una aplicación de escritorio creada con **JavaFX** que permite analizar carpetas para detectar y eliminar archivos duplicados de **cualquier tipo** según su **hash de contenido**.  
 Ofrece una **interfaz moderna y oscura**, un rendimiento rápido mediante **procesamiento paralelo**, y una experiencia limpia para mantener tu sistema ordenado.
+
+**Funciona con todo tipo de archivos**: documentos, imágenes, videos, audio, código, archivos comprimidos, y más. Las imágenes pueden usar opcionalmente detección avanzada basada en píxeles para agrupar imágenes visualmente idénticas sin importar los metadatos.
 
 ---
 
 ### ✨ Características
 
+- 📁 **Soporte universal de archivos** - Funciona con CUALQUIER tipo de archivo: documentos, imágenes, videos, audio, código, comprimidos, etc.
 - 🗂️ **Selección de carpetas** mediante un explorador intuitivo
 - ⚡ **Detección rápida de duplicados** usando algoritmos eficientes de hash (SHA-256)
+- 🖼️ **Detección avanzada en imágenes** (opcional) - Hash basado en píxeles para agrupar imágenes visualmente idénticas sin importar metadatos
 - 🧮 **Cálculo concurrente de hashes** - Aprovecha CPUs multinúcleo para escaneo significativamente más rápido
 - 🚀 **Ajuste automático de paralelismo** - Optimiza el tamaño del pool de hilos según los núcleos disponibles
 - 🤖 **Modo de eliminación automática** - Salta la vista previa y elimina todos los duplicados con una confirmación
 - 🔀 **Modo de selección manual** - Revisa y selecciona duplicados específicos para eliminar
 - 🛡️ **Protección de archivos originales** - Preserva automáticamente el archivo más antiguo de cada grupo
+- 👁️ **Vista previa inteligente** - Miniaturas para imágenes cuando están disponibles, información genérica para otros tipos
 - 🧹 **Operaciones seguras** con confirmación del usuario y reporte completo de errores
 - 🌙 **Interfaz moderna y oscura** construida con JavaFX y CSS personalizado
 - 🌍 **Soporte multiidioma** (español e inglés)
 - 📝 **Registro completo** con SLF4J y Logback
 - 🔄 **Seguimiento de progreso** con soporte de cancelación
-- 📊 **Tabla de resultados detallada** con columnas ordenables
+- 📊 **Vista de resultados detallada** organizada por grupos de duplicados
 - 🚀 **Construcción basada en Maven** para fácil compilación y empaquetado
 
 ---
@@ -309,9 +320,10 @@ java -jar target/duplicate-file-remover-1.0.0-SNAPSHOT.jar
    - Marca "Permitir actuar sobre subcarpetas" si quieres escanear subdirectorios
    - Marca "Eliminación automática (sin vista previa)" para modo automático (recomendado para limpieza rápida)
    - Desmarca "Eliminación automática" si quieres revisar y seleccionar archivos manualmente
+   - Marca "Detección avanzada en imágenes" para usar comparación basada en píxeles (agrupa imágenes visualmente idénticas sin importar metadatos)
 4. **Inicia el escaneo** con el botón "Empezar limpieza"
 5. **Modo automático**: Confirma la eliminación cuando se te pregunte - todos los duplicados se eliminarán automáticamente (se preservan los originales)
-6. **Modo manual**: Revisa los duplicados en la tabla de resultados, selecciona archivos a eliminar y haz clic en "Eliminar seleccionados"
+6. **Modo manual**: Revisa los duplicados en la vista de resultados, selecciona archivos a eliminar y haz clic en "Eliminar seleccionados"
 
 ---
 
